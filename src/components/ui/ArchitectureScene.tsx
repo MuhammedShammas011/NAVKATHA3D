@@ -1,6 +1,6 @@
 import React, { useRef, useMemo, useState, useEffect, useCallback } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
+import { OrbitControls, Environment, ContactShadows } from '@react-three/drei'
 import * as THREE from 'three'
 
 /* ═══════════════════════════════════════════════════════
@@ -32,6 +32,9 @@ const DEFAULTS: Record<string, Vec3> = {
   roofMain: [0, 0.88, 0],
   floor1: [0, -0.15, 0],
   floor2: [0.1, 0.35, 0],
+  stairs1: [-1.0, -0.85, 0.2],
+  stairs2: [0.8, -0.15, -0.4],
+  stairs3: [-0.5, 0.35, 0.6],
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -183,6 +186,27 @@ function EditDot({ hovered }: { hovered: boolean }) {
 }
 
 /* ═══════════════════════════════════════════════════════
+   STAIRCASE COMPONENT
+   ═══════════════════════════════════════════════════════ */
+function Staircase({ steps, width, depth, rise, run }: { steps: number, width: number, depth: number, rise: number, run: number }) {
+  return (
+    <group>
+      {Array.from({ length: steps }).map((_, i) => (
+        <mesh 
+          key={i} 
+          position={[0, i * rise + rise/2, i * run + depth/2]} 
+          castShadow 
+          receiveShadow
+        >
+          <boxGeometry args={[width, rise, depth]} />
+          <meshStandardMaterial color="#c96b36" roughness={0.7} metalness={0.2} />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════
    PAVILION — the main building structure
    ═══════════════════════════════════════════════════════ */
 function Pavilion({
@@ -205,28 +229,13 @@ function Pavilion({
     pavilionRef.current = groupRef.current
   })
 
-  // Animation with clean pause/resume
-  const pauseAccum = useRef(0)
-  const wasPaused = useRef(false)
-  const pauseStart = useRef(0)
-
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime()
-    if (editMode && !wasPaused.current) {
-      pauseStart.current = t
-      wasPaused.current = true
-    }
-    if (!editMode && wasPaused.current) {
-      pauseAccum.current += t - pauseStart.current
-      wasPaused.current = false
-    }
     if (!editMode) {
-      const adj = t - pauseAccum.current
-      groupRef.current.rotation.y = adj * 0.06
-      groupRef.current.position.y = -0.2 + Math.sin(adj * 0.3) * 0.08
-      // Gentle float
-      groupRef.current.position.y += Math.sin(adj * 1.2) * 0.025
-      groupRef.current.rotation.x = Math.sin(adj * 0.6) * 0.008
+      // Gentle float only (OrbitControls handles the main rotation now)
+      groupRef.current.position.y = -0.2 + Math.sin(t * 1.2) * 0.025
+    } else {
+      groupRef.current.position.y = -0.2
     }
   })
 
@@ -241,62 +250,63 @@ function Pavilion({
 
       {/* ── Base Platform ── */}
       <Draggable id="base" {...dp}>
-        <mesh receiveShadow>
-          <boxGeometry args={[3.2, 0.06, 2.2]} />
-          <meshStandardMaterial color="#c96b36" roughness={0.4} metalness={0.3} transparent opacity={Math.min(0.35 * om, 1.0)} />
-        </mesh>
-        <mesh>
-          <boxGeometry args={[3.2, 0.06, 2.2]} />
-          <meshBasicMaterial color="#c96b36" wireframe transparent opacity={Math.min(0.35 * om, 1.0)} />
+        <mesh receiveShadow castShadow>
+          <boxGeometry args={[3.2, 0.08, 2.2]} />
+          <meshStandardMaterial color="#333333" roughness={0.8} metalness={0.2} />
         </mesh>
       </Draggable>
 
       {/* ── Vertical Pillars ── */}
       {PILLAR_DEFAULTS.map((_, i) => (
         <Draggable key={`p${i}`} id={`p${i}`} {...dp}>
-          <mesh>
-            <boxGeometry args={[0.04, 1.7, 0.04]} />
-            <meshStandardMaterial color="#1a1a18" roughness={0.6} metalness={0.2} transparent opacity={Math.min(0.5 * om, 1.0)} />
+          <mesh castShadow receiveShadow>
+            <boxGeometry args={[0.06, 1.7, 0.06]} />
+            <meshStandardMaterial color="#1a1a18" roughness={0.4} metalness={0.7} />
           </mesh>
         </Draggable>
       ))}
 
       {/* ── Main Roof ── */}
       <Draggable id="roofMain" {...dp}>
-        <mesh castShadow>
-          <boxGeometry args={[3.4, 0.05, 2.4]} />
-          <meshStandardMaterial color="#c96b36" roughness={0.3} metalness={0.4} transparent opacity={Math.min(0.35 * om, 1.0)} />
-        </mesh>
-        <mesh>
-          <boxGeometry args={[3.4, 0.05, 2.4]} />
-          <meshBasicMaterial color="#c96b36" wireframe transparent opacity={Math.min(0.8 * om, 1.0)} />
+        <mesh castShadow receiveShadow>
+          <boxGeometry args={[3.4, 0.08, 2.4]} />
+          <meshStandardMaterial color="#c96b36" roughness={0.3} metalness={0.6} />
         </mesh>
       </Draggable>
 
 
       {/* ── Interior Floor Slabs ── */}
       <Draggable id="floor1" {...dp}>
-        <mesh>
-          <boxGeometry args={[2.8, 0.02, 1.8]} />
-          <meshStandardMaterial color="#1a1a18" roughness={0.5} transparent opacity={Math.min(0.3 * om, 0.8)} />
+        <mesh receiveShadow castShadow>
+          <boxGeometry args={[2.8, 0.04, 1.8]} />
+          <meshStandardMaterial color="#1a1a18" roughness={0.7} metalness={0.2} />
         </mesh>
       </Draggable>
       <Draggable id="floor2" {...dp}>
-        <mesh>
-          <boxGeometry args={[2.2, 0.02, 1.6]} />
-          <meshStandardMaterial color="#1a1a18" roughness={0.5} transparent opacity={Math.min(0.25 * om, 0.8)} />
+        <mesh receiveShadow castShadow>
+          <boxGeometry args={[2.2, 0.04, 1.6]} />
+          <meshStandardMaterial color="#222222" roughness={0.7} metalness={0.2} />
         </mesh>
       </Draggable>
 
-      {/* ── Glass Curtain Walls (fixed, not draggable) ── */}
-      <mesh position={[0, 0, 1.05]}>
-        <planeGeometry args={[3.0, 1.7]} />
-        <meshPhysicalMaterial color="#e8dcc8" transparent opacity={0.15} roughness={0.1} metalness={0.1} side={THREE.DoubleSide} />
-      </mesh>
-      <mesh position={[-1.55, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
-        <planeGeometry args={[2.0, 1.7]} />
-        <meshPhysicalMaterial color="#e8dcc8" transparent opacity={0.15} roughness={0.1} metalness={0.1} side={THREE.DoubleSide} />
-      </mesh>
+      {/* ── Staircases ── */}
+      <Draggable id="stairs1" {...dp}>
+        <group rotation={[0, Math.PI / 2, 0]}>
+          <Staircase steps={14} width={0.4} depth={0.12} rise={0.05} run={0.08} />
+        </group>
+      </Draggable>
+      <Draggable id="stairs2" {...dp}>
+        <group rotation={[0, -Math.PI / 2, 0]}>
+          <Staircase steps={10} width={0.4} depth={0.12} rise={0.05} run={0.08} />
+        </group>
+      </Draggable>
+      <Draggable id="stairs3" {...dp}>
+        <group rotation={[0, Math.PI, 0]}>
+          <Staircase steps={11} width={0.4} depth={0.12} rise={0.05} run={0.08} />
+        </group>
+      </Draggable>
+
+      {/* ── Glass Curtain Walls Removed for an open-air structure ── */}
     </group>
   )
 }
@@ -424,24 +434,25 @@ function SceneContent({
 
   return (
     <>
-      {/* Lighting */}
-      <ambientLight intensity={0.6} color="#f5f2eb" />
-      <directionalLight position={[5, 8, 5]} intensity={0.8} color="#f0d9c0" castShadow />
-      <directionalLight position={[-3, 4, -2]} intensity={0.3} color="#c96b36" />
-      <pointLight position={[0, 3, 0]} intensity={0.2} color="#c96b36" />
+      {/* Lighting & Environment */}
+      <Environment preset="city" />
+      <ambientLight intensity={0.4} color="#ffffff" />
+      <directionalLight position={[5, 8, 5]} intensity={1.2} color="#ffffff" castShadow />
+      <directionalLight position={[-3, 4, -2]} intensity={0.6} color="#c96b36" />
+      <pointLight position={[0, 3, 0]} intensity={0.4} color="#c96b36" />
 
-      {/* Camera controls — edit mode only */}
-      {editMode && (
-        <OrbitControls
-          ref={orbitRef}
-          enablePan={false}
-          enableZoom={false}
-          maxPolarAngle={Math.PI / 1.4}
-          minPolarAngle={Math.PI / 8}
-          dampingFactor={0.08}
-          enableDamping
-        />
-      )}
+      {/* Camera controls — always active for 360 degree movement */}
+      <OrbitControls
+        ref={orbitRef}
+        enablePan={false}
+        enableZoom={false}
+        maxPolarAngle={Math.PI / 1.4}
+        minPolarAngle={Math.PI / 8}
+        dampingFactor={0.08}
+        enableDamping
+        autoRotate={!editMode}
+        autoRotateSpeed={1.0}
+      />
 
       {/* Drag handler — processes drag in useFrame */}
       <DragHandler dragRef={dragRef} setPositions={setPositions} orbitRef={orbitRef} />
@@ -455,12 +466,10 @@ function SceneContent({
         orbitRef={orbitRef}
       />
 
-      {/* Decorative elements — hidden in edit mode for clarity */}
-      <OrbitingPlane radius={3} speed={0.15} offset={0} size={[0.6, 0.4]} opacity={0.06} visible={!editMode} />
-      <OrbitingPlane radius={3.5} speed={0.1} offset={Math.PI} size={[0.5, 0.35]} opacity={0.04} visible={!editMode} />
-      <OrbitingPlane radius={2.8} speed={0.12} offset={Math.PI / 2} size={[0.4, 0.3]} opacity={0.05} visible={!editMode} />
-      <FloatingFragments visible={!editMode} />
-      <SpiralGuide visible={!editMode} />
+      {/* Decorative elements removed for a cleaner brutalist look */}
+
+      {/* Realistic contact shadows mapping onto the floor */}
+      <ContactShadows position={[0, -1.15, 0]} opacity={0.7} scale={10} blur={2} far={4} color="#1a1a18" />
 
       {/* Grid floor — more visible in edit mode */}
       <GridFloor editMode={editMode} />
@@ -480,8 +489,8 @@ export function ArchitectureScene() {
 
   return (
     <div
-      className="absolute inset-0 z-[1]"
-      style={{ pointerEvents: editMode ? 'auto' : 'none' }}
+      className="absolute inset-0 z-[1] cursor-grab active:cursor-grabbing"
+      style={{ pointerEvents: 'auto' }}
       onPointerMove={editMode ? (e) => e.stopPropagation() : undefined}
       onMouseMove={editMode ? (e) => e.stopPropagation() : undefined}
     >
@@ -490,7 +499,7 @@ export function ArchitectureScene() {
         camera={{ position: [3.5, 2, 4], fov: 40 }}
         dpr={[1, 1.5]}
         gl={{ antialias: true, alpha: true }}
-        style={{ pointerEvents: editMode ? 'auto' : 'none' }}
+        style={{ pointerEvents: 'auto' }}
       >
         <SceneContent editMode={editMode} positions={positions} setPositions={setPositions} />
       </Canvas>

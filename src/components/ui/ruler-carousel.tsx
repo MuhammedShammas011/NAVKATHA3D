@@ -270,6 +270,8 @@ export function RulerCarousel({
   );
 }
 
+import { FadeIn } from './fade-in';
+
 export function ClientSection() {
   const originalItems: CarouselItem[] = [
     { id: 1, title: "NIKE" },
@@ -284,9 +286,10 @@ export function ClientSection() {
   ];
 
   return (
-    <section className="relative w-full bg-[#f5f2eb] text-[#1a1a18] pb-32 flex flex-col items-center border-b-8 border-[#1a1a18]">
-
-      <RulerCarousel originalItems={originalItems} />
+    <section id="selected-clients" className="relative w-full bg-[#f5f2eb] text-[#1a1a18] pb-32 flex flex-col items-center border-b-8 border-[#1a1a18]">
+      <FadeIn className="w-full">
+        <RulerCarousel originalItems={originalItems} />
+      </FadeIn>
     </section>
   );
 }
