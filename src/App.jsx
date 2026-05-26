@@ -7,6 +7,7 @@ import { useScreenSize } from '@/hooks/use-screen-size'
 import { InitialLoader } from '@/components/ui/loader'
 import { ClientSection } from '@/components/ui/ruler-carousel'
 import { WorksSection } from '@/components/ui/works-carousel'
+import { TestimonialSection } from '@/components/ui/TestimonialSection'
 import { Footer } from '@/components/ui/footer'
 
 export default function App() {
@@ -45,6 +46,7 @@ export default function App() {
         <FeatureSection />
         <ClientSection />
         <WorksSection />
+        <TestimonialSection />
         <Footer />
       </main>
     </>

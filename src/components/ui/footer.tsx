@@ -6,9 +6,9 @@ import { Waves } from "./wave-background"
 import { FadeIn } from "./fade-in"
 
 const XIcon = ({ className }: { className?: string }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    viewBox="0 0 24 24" 
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
     fill="currentColor"
     className={className}
   >
@@ -18,6 +18,7 @@ const XIcon = ({ className }: { className?: string }) => (
 
 export function Footer() {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
 
   return (
     <footer id="contact" className="relative w-full border-t-8 border-[#1a1a18] flex flex-col justify-between min-h-[70vh] md:min-h-[90vh] pt-12 md:pt-16 overflow-hidden z-20">
@@ -64,9 +65,9 @@ export function Footer() {
               Location
             </h4>
             <p className="text-[#1a1a18] font-medium leading-relaxed">
-              100 Architectural Way<br />
-              Design District<br />
-              New York, NY 10001
+              100 ARCHITECTURAL WAY<br />
+              BANGALORU<br />
+              INDIA, KARNATAKA -560016
             </p>
           </div>
         </div>
@@ -153,30 +154,54 @@ export function Footer() {
                       </div>
                       <div>
                         <p className="font-bold tracking-widest uppercase text-xs mb-2 text-[#c96b36]">Headquarters</p>
-                        <p className="font-black text-xl uppercase leading-tight">100 Architectural Way<br />Design District<br />New York, NY 10001</p>
+                        <p className="font-black text-xl uppercase leading-tight">100 Architectural Way<br />BANGALORU<br />INDIA, KARNATAKA 560016</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Right Side: Form */}
-                <form className="bg-white p-8 border-4 border-[#1a1a18] shadow-[8px_8px_0_0_#1a1a18] flex flex-col gap-6" onSubmit={(e) => { e.preventDefault(); alert('Message sent successfully!'); setIsModalOpen(false); }}>
-                  <div className="flex flex-col gap-2">
-                    <label className="font-bold tracking-widest uppercase text-xs text-[#1a1a18]">Full Name</label>
-                    <input required type="text" placeholder="John Doe" className="w-full bg-[#f5f2eb] border-2 border-[#1a1a18] p-4 text-[#1a1a18] font-medium focus:outline-none focus:border-[#c96b36] transition-colors placeholder:text-[#1a1a18]/40" />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <label className="font-bold tracking-widest uppercase text-xs text-[#1a1a18]">Email Address</label>
-                    <input required type="email" placeholder="john@company.com" className="w-full bg-[#f5f2eb] border-2 border-[#1a1a18] p-4 text-[#1a1a18] font-medium focus:outline-none focus:border-[#c96b36] transition-colors placeholder:text-[#1a1a18]/40" />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <label className="font-bold tracking-widest uppercase text-xs text-[#1a1a18]">Project Details</label>
-                    <textarea required rows={5} placeholder="Tell us about your vision..." className="w-full bg-[#f5f2eb] border-2 border-[#1a1a18] p-4 text-[#1a1a18] font-medium focus:outline-none focus:border-[#c96b36] transition-colors placeholder:text-[#1a1a18]/40 resize-none"></textarea>
-                  </div>
-                  <button type="submit" className="mt-4 flex items-center justify-center gap-4 bg-[#1a1a18] text-[#f5f2eb] px-8 py-5 font-bold uppercase tracking-widest text-sm border-2 border-[#1a1a18] shadow-[6px_6px_0_0_#c96b36] hover:shadow-[10px_10px_0_0_#c96b36] hover:-translate-y-1 hover:-translate-x-1 transition-all w-full">
-                    Submit Inquiry <Send className="w-5 h-5" />
-                  </button>
-                </form>
+                {/* Right Side: Form or Success Message */}
+                <div className="bg-white p-8 border-4 border-[#1a1a18] shadow-[8px_8px_0_0_#1a1a18] flex flex-col justify-center">
+                  {isSubmitted ? (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="flex flex-col items-center justify-center text-center gap-6 py-12"
+                    >
+                      <div className="w-24 h-24 bg-[#c96b36] border-4 border-[#1a1a18] shadow-[8px_8px_0_0_#1a1a18] flex items-center justify-center mb-4 -rotate-12">
+                        <Send className="w-10 h-10 text-[#f5f2eb]" />
+                      </div>
+                      <h3 className="text-4xl font-black font-montserrat uppercase text-[#1a1a18]">Inquiry Received</h3>
+                      <p className="text-[#1a1a18] font-medium max-w-sm text-lg">
+                        Thank you for reaching out. Our architectural team will review your project details and respond within 24 hours.
+                      </p>
+                      <button
+                        onClick={() => { setIsModalOpen(false); setTimeout(() => setIsSubmitted(false), 500) }}
+                        className="mt-8 bg-[#1a1a18] text-[#f5f2eb] px-8 py-4 font-bold uppercase tracking-widest text-sm border-2 border-[#1a1a18] shadow-[6px_6px_0_0_#c96b36] hover:shadow-[10px_10px_0_0_#c96b36] hover:-translate-y-1 transition-all"
+                      >
+                        Return to site
+                      </button>
+                    </motion.div>
+                  ) : (
+                    <form className="flex flex-col gap-6" onSubmit={(e) => { e.preventDefault(); setIsSubmitted(true); }}>
+                      <div className="flex flex-col gap-2">
+                        <label className="font-bold tracking-widest uppercase text-xs text-[#1a1a18]">Full Name</label>
+                        <input required type="text" placeholder="John Doe" className="w-full bg-[#f5f2eb] border-2 border-[#1a1a18] p-4 text-[#1a1a18] font-medium focus:outline-none focus:border-[#c96b36] transition-colors placeholder:text-[#1a1a18]/40" />
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <label className="font-bold tracking-widest uppercase text-xs text-[#1a1a18]">Email Address</label>
+                        <input required type="email" placeholder="john@company.com" className="w-full bg-[#f5f2eb] border-2 border-[#1a1a18] p-4 text-[#1a1a18] font-medium focus:outline-none focus:border-[#c96b36] transition-colors placeholder:text-[#1a1a18]/40" />
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <label className="font-bold tracking-widest uppercase text-xs text-[#1a1a18]">Project Details</label>
+                        <textarea required rows={5} placeholder="Tell us about your vision..." className="w-full bg-[#f5f2eb] border-2 border-[#1a1a18] p-4 text-[#1a1a18] font-medium focus:outline-none focus:border-[#c96b36] transition-colors placeholder:text-[#1a1a18]/40 resize-none"></textarea>
+                      </div>
+                      <button type="submit" className="mt-4 flex items-center justify-center gap-4 bg-[#1a1a18] text-[#f5f2eb] px-8 py-5 font-bold uppercase tracking-widest text-sm border-2 border-[#1a1a18] shadow-[6px_6px_0_0_#c96b36] hover:shadow-[10px_10px_0_0_#c96b36] hover:-translate-y-1 hover:-translate-x-1 transition-all w-full">
+                        Submit Inquiry <Send className="w-5 h-5" />
+                      </button>
+                    </form>
+                  )}
+                </div>
               </div>
             </div>
           </motion.div>
