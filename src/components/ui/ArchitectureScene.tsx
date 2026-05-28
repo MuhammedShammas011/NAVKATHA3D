@@ -14,6 +14,9 @@ interface DragInfo {
   offset: THREE.Vector3
   target: THREE.Group
   pavilionGroup: THREE.Group
+  mode: 'move' | 'rotate'
+  rotateStart: { x: number; y: number }
+  rotationStart: Vec3
 }
 
 function generatePillarDefaults(): Vec3[] {
@@ -37,49 +40,84 @@ const DEFAULTS: Record<string, Vec3> = {
   stairs3: [-0.5, 0.35, 0.6],
 }
 
+const ROT_DEFAULTS: Record<string, Vec3> = {
+  ...Object.fromEntries(PILLAR_DEFAULTS.map((_, i) => [`p${i}`, [0, 0, 0]])),
+  base: [0, 0, 0],
+  roofMain: [0, 0, 0],
+  floor1: [0, 0, 0],
+  floor2: [0, 0, 0],
+  stairs1: [0, 0, 0],
+  stairs2: [0, 0, 0],
+  stairs3: [0, 0, 0],
+}
+
 /* ═══════════════════════════════════════════════════════
    DRAG HANDLER — runs in useFrame for smooth updates
    ═══════════════════════════════════════════════════════ */
 function DragHandler({
   dragRef,
   setPositions,
+  setRotations,
   orbitRef,
 }: {
   dragRef: React.MutableRefObject<DragInfo | null>
   setPositions: React.Dispatch<React.SetStateAction<Record<string, Vec3>>>
+  setRotations: React.Dispatch<React.SetStateAction<Record<string, Vec3>>>
   orbitRef: React.MutableRefObject<any>
 }) {
   const { pointer, camera, gl } = useThree()
   const raycaster = useRef(new THREE.Raycaster())
   const hit = useRef(new THREE.Vector3())
 
-  // Every frame: if dragging, project pointer onto drag plane and move target
   useFrame(() => {
     const info = dragRef.current
     if (!info) return
-    raycaster.current.setFromCamera(pointer, camera)
-    if (raycaster.current.ray.intersectPlane(info.plane, hit.current)) {
-      const world = hit.current.clone().add(info.offset)
-      const local = info.pavilionGroup.worldToLocal(world)
-      info.target.position.copy(local)
+
+    if (info.mode === 'move') {
+      raycaster.current.setFromCamera(pointer, camera)
+      if (raycaster.current.ray.intersectPlane(info.plane, hit.current)) {
+        const world = hit.current.clone().add(info.offset)
+        const local = info.pavilionGroup.worldToLocal(world)
+        info.target.position.copy(local)
+      }
     }
+    // Rotate mode is handled via pointermove in the DOM listener below
   })
 
-  // Pointer-up: sync final position to React state, re-enable orbit
   useEffect(() => {
     const el = gl.domElement
-    const onUp = () => {
+
+    const onMove = (e: PointerEvent) => {
+      const info = dragRef.current
+      if (!info || info.mode !== 'rotate') return
+      const dx = (e.clientX - info.rotateStart.x) * 0.01
+      const dy = (e.clientY - info.rotateStart.y) * 0.01
+      info.target.rotation.y = info.rotationStart[1] + dx
+      info.target.rotation.x = info.rotationStart[0] + dy
+    }
+
+    const onUp = (e: PointerEvent) => {
       const info = dragRef.current
       if (!info) return
-      const p = info.target.position
-      setPositions((prev) => ({ ...prev, [info.id]: [p.x, p.y, p.z] }))
+      if (info.mode === 'move') {
+        const p = info.target.position
+        setPositions((prev) => ({ ...prev, [info.id]: [p.x, p.y, p.z] }))
+      } else {
+        const r = info.target.rotation
+        setRotations((prev) => ({ ...prev, [info.id]: [r.x, r.y, r.z] }))
+      }
       dragRef.current = null
       document.body.style.cursor = 'default'
       if (orbitRef.current) orbitRef.current.enabled = true
     }
+
+    el.addEventListener('pointermove', onMove)
     el.addEventListener('pointerup', onUp)
-    return () => el.removeEventListener('pointerup', onUp)
-  }, [gl, dragRef, setPositions, orbitRef])
+    return () => {
+      el.removeEventListener('pointermove', onMove)
+      el.removeEventListener('pointerup', onUp)
+    }
+  }, [gl, dragRef, setPositions, setRotations, orbitRef])
 
   return null
 }
@@ -91,6 +129,7 @@ function Draggable({
   id,
   editMode,
   positions,
+  rotations,
   dragRef,
   pavilionRef,
   orbitRef,
@@ -99,6 +138,7 @@ function Draggable({
   id: string
   editMode: boolean
   positions: Record<string, Vec3>
+  rotations: Record<string, Vec3>
   dragRef: React.MutableRefObject<DragInfo | null>
   pavilionRef: React.MutableRefObject<THREE.Group>
   orbitRef: React.MutableRefObject<any>
@@ -108,11 +148,13 @@ function Draggable({
   const ref = useRef<THREE.Group>(null!)
   const [hovered, setHovered] = useState(false)
   const pos = positions[id] || DEFAULTS[id]
+  const rot = rotations[id] || ROT_DEFAULTS[id] || [0, 0, 0]
 
   return (
     <group
       ref={ref}
       position={pos}
+      rotation={[rot[0], rot[1], rot[2]]}
       onPointerOver={(e) => {
         if (!editMode) return
         e.stopPropagation()
@@ -128,37 +170,50 @@ function Draggable({
       onPointerDown={(e) => {
         if (!editMode) return
         e.stopPropagation()
-        document.body.style.cursor = 'grabbing'
 
-        // Disable orbit while dragging
         if (orbitRef.current) orbitRef.current.enabled = false
 
-        // Get this element's world position
-        const worldPos = new THREE.Vector3()
-        ref.current.getWorldPosition(worldPos)
+        const isRotate = e.button === 2 || e.shiftKey
 
-        // Create a drag plane at the click point, facing the camera
-        const plane = new THREE.Plane()
-        const normal = camera.position.clone().sub(e.point).normalize()
-        plane.setFromNormalAndCoplanarPoint(normal, e.point)
-
-        // Offset from click point to element center (in world space)
-        const offset = worldPos.clone().sub(e.point)
-
-        dragRef.current = {
-          id,
-          plane,
-          offset,
-          target: ref.current,
-          pavilionGroup: pavilionRef.current,
+        if (isRotate) {
+          // Rotation mode: track mouse movement to spin element
+          document.body.style.cursor = 'crosshair'
+          const currentRot = ref.current.rotation
+          dragRef.current = {
+            id,
+            plane: new THREE.Plane(),
+            offset: new THREE.Vector3(),
+            target: ref.current,
+            pavilionGroup: pavilionRef.current,
+            mode: 'rotate',
+            rotateStart: { x: e.clientX, y: e.clientY },
+            rotationStart: [currentRot.x, currentRot.y, currentRot.z],
+          }
+        } else {
+          // Move mode
+          document.body.style.cursor = 'grabbing'
+          const worldPos = new THREE.Vector3()
+          ref.current.getWorldPosition(worldPos)
+          const plane = new THREE.Plane()
+          const normal = camera.position.clone().sub(e.point).normalize()
+          plane.setFromNormalAndCoplanarPoint(normal, e.point)
+          const offset = worldPos.clone().sub(e.point)
+          dragRef.current = {
+            id,
+            plane,
+            offset,
+            target: ref.current,
+            pavilionGroup: pavilionRef.current,
+            mode: 'move',
+            rotateStart: { x: 0, y: 0 },
+            rotationStart: [0, 0, 0],
+          }
         }
 
-        // Capture pointer so drag works even if cursor leaves canvas
         gl.domElement.setPointerCapture(e.nativeEvent.pointerId)
       }}
     >
       {children}
-      {/* Pulsing edit indicator dot */}
       {editMode && <EditDot hovered={hovered} />}
     </group>
   )
@@ -212,12 +267,14 @@ function Staircase({ steps, width, depth, rise, run }: { steps: number, width: n
 function Pavilion({
   editMode,
   positions,
+  rotations,
   dragRef,
   pavilionRef,
   orbitRef,
 }: {
   editMode: boolean
   positions: Record<string, Vec3>
+  rotations: Record<string, Vec3>
   dragRef: React.MutableRefObject<DragInfo | null>
   pavilionRef: React.MutableRefObject<THREE.Group>
   orbitRef: React.MutableRefObject<any>
@@ -240,7 +297,7 @@ function Pavilion({
   })
 
   // Shared props for all draggable children
-  const dp = { editMode, positions, dragRef, pavilionRef, orbitRef }
+  const dp = { editMode, positions, rotations, dragRef, pavilionRef, orbitRef }
 
   // Opacity multiplier: higher in edit mode for better visibility
   const om = editMode ? 1.8 : 1
@@ -423,10 +480,14 @@ function SceneContent({
   editMode,
   positions,
   setPositions,
+  rotations,
+  setRotations,
 }: {
   editMode: boolean
   positions: Record<string, Vec3>
   setPositions: React.Dispatch<React.SetStateAction<Record<string, Vec3>>>
+  rotations: Record<string, Vec3>
+  setRotations: React.Dispatch<React.SetStateAction<Record<string, Vec3>>>
 }) {
   const dragRef = useRef<DragInfo | null>(null)
   const pavilionRef = useRef<THREE.Group>(null!)
@@ -455,12 +516,13 @@ function SceneContent({
       />
 
       {/* Drag handler — processes drag in useFrame */}
-      <DragHandler dragRef={dragRef} setPositions={setPositions} orbitRef={orbitRef} />
+      <DragHandler dragRef={dragRef} setPositions={setPositions} setRotations={setRotations} orbitRef={orbitRef} />
 
       {/* Main Pavilion */}
       <Pavilion
         editMode={editMode}
         positions={positions}
+        rotations={rotations}
         dragRef={dragRef}
         pavilionRef={pavilionRef}
         orbitRef={orbitRef}
@@ -483,8 +545,12 @@ function SceneContent({
 export function ArchitectureScene() {
   const [editMode, setEditMode] = useState(false)
   const [positions, setPositions] = useState<Record<string, Vec3>>({ ...DEFAULTS })
+  const [rotations, setRotations] = useState<Record<string, Vec3>>({ ...ROT_DEFAULTS })
 
-  const resetPositions = useCallback(() => setPositions({ ...DEFAULTS }), [])
+  const resetPositions = useCallback(() => {
+    setPositions({ ...DEFAULTS })
+    setRotations({ ...ROT_DEFAULTS })
+  }, [])
   const toggleEdit = useCallback(() => setEditMode((v) => !v), [])
 
   return (
@@ -501,7 +567,13 @@ export function ArchitectureScene() {
         gl={{ antialias: true, alpha: true }}
         style={{ pointerEvents: 'auto' }}
       >
-        <SceneContent editMode={editMode} positions={positions} setPositions={setPositions} />
+        <SceneContent
+          editMode={editMode}
+          positions={positions}
+          setPositions={setPositions}
+          rotations={rotations}
+          setRotations={setRotations}
+        />
       </Canvas>
 
       {/* ── Edit Mode UI Panel ── */}
@@ -589,9 +661,9 @@ export function ArchitectureScene() {
                   fontFamily: "'Outfit', 'Inter', sans-serif",
                 }}
               >
-                Drag elements to reposition.
-                <br />
-                Right‑drag to orbit.
+               Drag to move · Shift+drag or right-drag to rotate 360°.
+               <br />
+               Right‑drag canvas to orbit camera.
               </p>
             </>
           )}
