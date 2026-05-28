@@ -26,7 +26,7 @@ const testimonials = [
   },
   {
     index: "03",
-    author: "Dr. Sarah Lin",
+    author: "Dr. Shammas",
     role: "Head of Kinetic Structures, MIT",
     keyword: "MASTERCLASS",
     text: "A masterclass in autonomous architecture. The tactile lighting grids they developed are now standard curriculum in our advanced environmental design courses.",
@@ -60,7 +60,7 @@ const testimonials = [
 ]
 
 const clientTicker = [
-  "ELENA ROSTOVA", "✦", "MARCUS VANCE", "✦", "DR. SARAH LIN", "✦",
+  "ELENA ROSTOVA", "✦", "MARCUS VANCE", "✦", "Dr. Shammas", "✦",
   "JAMESON HOLT", "✦", "AIDA BELL", "✦",
 ]
 
