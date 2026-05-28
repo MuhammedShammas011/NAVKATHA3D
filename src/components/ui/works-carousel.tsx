@@ -159,7 +159,7 @@ export function WorksSection() {
               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
               className="absolute inset-0 flex items-center justify-center"
             >
-              <div 
+              <div
                 onClick={() => setSelectedProject(works[currentIndex])}
                 className="group relative w-full h-full max-w-[1000px] border-[6px] border-[#1a1a18] bg-[#1a1a18] shadow-[16px_16px_0_0_#1a1a18] transition-all duration-500 hover:shadow-[24px_24px_0_0_#c96b36] hover:-translate-y-2 overflow-hidden cursor-pointer"
               >
@@ -220,7 +220,7 @@ export function WorksSection() {
             className="fixed inset-0 z-[100] bg-[#f5f2eb] overflow-y-auto pointer-events-auto"
           >
             <div className="min-h-screen flex flex-col p-6 md:p-12 border-t-[16px] border-[#c96b36] max-w-7xl mx-auto">
-              
+
               {/* Header & Close */}
               <div className="flex flex-col md:flex-row justify-between items-start mb-16 gap-8">
                 <div className="flex flex-col gap-4">
@@ -235,7 +235,7 @@ export function WorksSection() {
                   onClick={() => setSelectedProject(null)}
                   className="bg-[#1a1a18] text-[#f5f2eb] px-8 py-4 font-bold uppercase tracking-widest text-sm border-2 border-[#1a1a18] shadow-[6px_6px_0_0_#c96b36] hover:shadow-[10px_10px_0_0_#c96b36] hover:-translate-y-1 transition-all whitespace-nowrap sticky top-6 z-50"
                 >
-                  Close [X]
+                  [X]
                 </button>
               </div>
 
@@ -275,8 +275,8 @@ export function WorksSection() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-24">
                 {selectedProject.gallery.map((img, idx) => (
                   <div key={idx} className="relative aspect-square border-4 border-[#1a1a18] shadow-[8px_8px_0_0_#1a1a18] overflow-hidden group">
-                    <img 
-                      src={img} 
+                    <img
+                      src={img}
                       alt={`Gallery ${idx + 1}`}
                       className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-110"
                     />

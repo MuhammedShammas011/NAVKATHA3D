@@ -119,7 +119,7 @@ export function RulerCarousel({
   useEffect(() => {
     const timer = setInterval(() => {
       handleNext();
-    }, 2500); // Decent speed
+    }, 1200); // Faster speed
     return () => clearInterval(timer);
   }, [activeIndex, isResetting]); // Depend on activeIndex to restart timer after manual clicks
 
