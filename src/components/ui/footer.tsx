@@ -93,7 +93,7 @@ export function Footer() {
 
       {/* Massive Full Width Brand Name */}
       <FadeIn delay={0.1} direction="none" className="relative z-10 w-full flex items-end justify-center px-4 md:px-8 pb-0 pointer-events-none mt-auto">
-        <h1 className="text-[#1a1a18] font-black font-montserrat tracking-tighter leading-[0.8] uppercase text-[15vw] w-full text-center flex justify-between select-none">
+        <h1 className="text-[#1a1a18]/100 font-black font-montserrat tracking-tighter leading-[0.8] uppercase text-[15vw] w-full text-center flex justify-between select-none">
           <span>N</span>
           <span>A</span>
           <span>V</span>
@@ -115,7 +115,14 @@ export function Footer() {
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="fixed inset-0 z-[100] bg-[#f5f2eb] overflow-y-auto pointer-events-auto"
           >
-            <div className="min-h-screen flex flex-col p-6 md:p-12 border-t-[16px] border-[#c96b36] max-w-7xl mx-auto">
+            {/* Massive Background Watermark */}
+            <div className="fixed inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-0">
+              <h1 className="text-[#1a1a18] font-black font-montserrat tracking-tighter uppercase text-[22vw] opacity-[0.03] select-none whitespace-nowrap">
+                NAVKATHA
+              </h1>
+            </div>
+
+            <div className="min-h-screen flex flex-col p-6 md:p-12 border-t-[16px] border-[#c96b36] max-w-7xl mx-auto relative z-10">
 
               {/* Header & Close */}
               <div className="flex flex-col md:flex-row justify-between items-start mb-16 gap-8">
@@ -183,18 +190,29 @@ export function Footer() {
                       </button>
                     </motion.div>
                   ) : (
-                    <form className="flex flex-col gap-6" onSubmit={(e) => { e.preventDefault(); setIsSubmitted(true); }}>
+                    <form className="flex flex-col gap-6" onSubmit={(e) => { 
+                      e.preventDefault(); 
+                      const formData = new FormData(e.currentTarget);
+                      const name = formData.get('name');
+                      const email = formData.get('email');
+                      const details = formData.get('details');
+                      
+                      // Open default mail client with pre-filled details
+                      window.location.href = `mailto:mhdshammas011@gmail.com?subject=New Project Inquiry from ${name}&body=Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0AProject Details:%0D%0A${details}`;
+                      
+                      setIsSubmitted(true); 
+                    }}>
                       <div className="flex flex-col gap-2">
                         <label className="font-bold tracking-widest uppercase text-xs text-[#1a1a18]">Full Name</label>
-                        <input required type="text" placeholder="John Doe" className="w-full bg-[#f5f2eb] border-2 border-[#1a1a18] p-4 text-[#1a1a18] font-medium focus:outline-none focus:border-[#c96b36] transition-colors placeholder:text-[#1a1a18]/40" />
+                        <input name="name" required type="text" placeholder="John Doe" className="w-full bg-[#f5f2eb] border-2 border-[#1a1a18] p-4 text-[#1a1a18] font-medium focus:outline-none focus:border-[#c96b36] transition-colors placeholder:text-[#1a1a18]/40" />
                       </div>
                       <div className="flex flex-col gap-2">
                         <label className="font-bold tracking-widest uppercase text-xs text-[#1a1a18]">Email Address</label>
-                        <input required type="email" placeholder="john@company.com" className="w-full bg-[#f5f2eb] border-2 border-[#1a1a18] p-4 text-[#1a1a18] font-medium focus:outline-none focus:border-[#c96b36] transition-colors placeholder:text-[#1a1a18]/40" />
+                        <input name="email" required type="email" placeholder="john@company.com" className="w-full bg-[#f5f2eb] border-2 border-[#1a1a18] p-4 text-[#1a1a18] font-medium focus:outline-none focus:border-[#c96b36] transition-colors placeholder:text-[#1a1a18]/40" />
                       </div>
                       <div className="flex flex-col gap-2">
                         <label className="font-bold tracking-widest uppercase text-xs text-[#1a1a18]">Project Details</label>
-                        <textarea required rows={5} placeholder="Tell us about your vision..." className="w-full bg-[#f5f2eb] border-2 border-[#1a1a18] p-4 text-[#1a1a18] font-medium focus:outline-none focus:border-[#c96b36] transition-colors placeholder:text-[#1a1a18]/40 resize-none"></textarea>
+                        <textarea name="details" required rows={5} placeholder="Tell us about your vision..." className="w-full bg-[#f5f2eb] border-2 border-[#1a1a18] p-4 text-[#1a1a18] font-medium focus:outline-none focus:border-[#c96b36] transition-colors placeholder:text-[#1a1a18]/40 resize-none"></textarea>
                       </div>
                       <button type="submit" className="mt-4 flex items-center justify-center gap-4 bg-[#1a1a18] text-[#f5f2eb] px-8 py-5 font-bold uppercase tracking-widest text-sm border-2 border-[#1a1a18] shadow-[6px_6px_0_0_#c96b36] hover:shadow-[10px_10px_0_0_#c96b36] hover:-translate-y-1 hover:-translate-x-1 transition-all w-full">
                         Submit Inquiry <Send className="w-5 h-5" />

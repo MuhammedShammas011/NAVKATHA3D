@@ -76,7 +76,7 @@ export function TestimonialSection() {
           <span className="inline-block text-xs text-[#f5f2eb] font-bold tracking-[0.3em] uppercase bg-[#c96b36] px-4 py-2 border-2 border-[#1a1a18] w-max mb-6">
             // VOICES FROM THE FIELD
           </span>
-          <h2 className="text-[#1a1a18] text-[4rem] md:text-[7rem] font-montserrat font-black tracking-tighter uppercase leading-[0.85]">
+          <h2 className="text-[#1a1a18] text-[4rem] md:text-[7rem] font-montserrat font-black tracking-tighter uppercase leading-[0.85] cursor-default transition-all duration-300 hover:-translate-y-2 hover:-translate-x-2 hover:drop-shadow-[6px_6px_0_#c96b36]">
             WHAT THEY<br />SAID
           </h2>
         </div>

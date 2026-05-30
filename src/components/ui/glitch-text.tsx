@@ -14,7 +14,7 @@ export function GlitchText() {
   useEffect(() => {
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % phrases.length)
-    }, 4000)
+    }, 3000)
     return () => clearInterval(timer)
   }, [])
 

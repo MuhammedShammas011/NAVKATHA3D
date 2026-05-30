@@ -125,7 +125,7 @@ export function WorksSection() {
               <div className="w-16 h-16 bg-[#c96b36] border-4 border-[#1a1a18] shadow-[8px_8px_0_0_#1a1a18] flex items-center justify-center">
                 <Box className="w-8 h-8 text-[#1a1a18]" />
               </div>
-              <h2 className="text-[#1a1a18] hover:text-[#c96b36] transition-colors duration-300 text-5xl md:text-7xl font-montserrat font-black tracking-tighter uppercase leading-none bg-[#f5f2eb] px-4 py-2 border-4 border-[#1a1a18] cursor-default">
+              <h2 className="text-[#1a1a18] transition-all duration-300 text-5xl md:text-7xl font-montserrat font-black tracking-tighter uppercase leading-none bg-[#f5f2eb] px-4 py-2 border-4 border-[#1a1a18] cursor-default hover:-translate-y-2 hover:-translate-x-2 hover:shadow-[6px_6px_0_0_#c96b36]">
                 Built <br />Projects
               </h2>
             </div>

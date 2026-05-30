@@ -1,8 +1,6 @@
 import React, { useState } from "react"
-import { useScreenSize } from "@/hooks/use-screen-size"
 import { ArchitectureScene } from "@/components/ui/ArchitectureScene"
 import { GlitchText } from "@/components/ui/glitch-text"
-import { Compass, Sparkles, MoveRight, HelpCircle, Layers } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
 
 function GooeyDemo() {

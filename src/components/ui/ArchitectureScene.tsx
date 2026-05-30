@@ -3,6 +3,9 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, Environment, ContactShadows } from '@react-three/drei'
 import * as THREE from 'three'
 
+const ThreeLine = 'line' as any
+const ThreeLineBasicMaterial = 'lineBasicMaterial' as any
+
 /* ═══════════════════════════════════════════════════════
    TYPES & CONSTANTS
    ═══════════════════════════════════════════════════════ */
@@ -341,7 +344,7 @@ function Pavilion({
       </Draggable>
       <Draggable id="floor2" {...dp}>
         <mesh receiveShadow castShadow>
-          <boxGeometry args={[2.2, 0.04, 1.6]} />
+          <boxGeometry args={[2.8, 0.04, 1.8]} />
           <meshStandardMaterial color="#222222" roughness={0.7} metalness={0.2} />
         </mesh>
       </Draggable>
@@ -379,10 +382,9 @@ function CrossBrace({ start, end }: { start: Vec3; end: Vec3 }) {
     return geo
   }, [start, end])
   return (
-    <line geometry={geometry}>
-      {/* @ts-ignore */}
-      <lineBasicMaterial color="#c96b36" transparent opacity={0.45} />
-    </line>
+    <ThreeLine geometry={geometry}>
+      <ThreeLineBasicMaterial color="#c96b36" transparent opacity={0.45} />
+    </ThreeLine>
   )
 }
 
@@ -465,10 +467,9 @@ function SpiralGuide({ visible = true }: { visible?: boolean }) {
   if (!visible) return null
   return (
     <group ref={ref} position={[2.5, 0, -1]}>
-      <line geometry={geometry}>
-        {/* @ts-ignore */}
-        <lineBasicMaterial color="#c96b36" transparent opacity={0.35} />
-      </line>
+      <ThreeLine geometry={geometry}>
+        <ThreeLineBasicMaterial color="#c96b36" transparent opacity={0.35} />
+      </ThreeLine>
     </group>
   )
 }

@@ -69,7 +69,7 @@ export function FeatureSection() {
             whileInView={{ y: 0, opacity: 1 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[#1a1a18] text-6xl md:text-[8rem] font-montserrat font-black tracking-tighter uppercase leading-[0.85] cursor-default"
+            className="text-[#1a1a18] text-6xl md:text-[8rem] font-montserrat font-black tracking-tighter uppercase leading-[0.85] cursor-default transition-all duration-300 hover:-translate-y-2 hover:-translate-x-2 hover:drop-shadow-[6px_6px_0_#c96b36]"
           >
             <motion.div
               animate={{ y: [-5, 5, -5], x: [-2, 2, -2] }}
