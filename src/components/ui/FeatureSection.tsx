@@ -26,7 +26,7 @@ export function FeatureSection() {
       image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop",
       longDesc: "Organic Hulls represent a radical departure from rigid geometry. We cast specialized high-strength concrete over complex, double-curved molds to create shells that mimic the fluid grace of marine life. These installations don't just sit on the water—they interact with the waves, distributing stress efficiently across their sweeping surfaces while creating serene, cavernous interiors that amplify the acoustics of the ocean.",
       gallery: [
-        "https://images.unsplash.com/photo-1541888045656-d70399478f7e?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1551038247-3d9af20df552?q=80&w=987&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1518005020951-eccb494ad742?q=80&w=1200&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1481026469463-66327c86e544?q=80&w=1200&auto=format&fit=crop"
       ]

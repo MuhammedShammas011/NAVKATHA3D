@@ -556,8 +556,7 @@ export function ArchitectureScene() {
 
   return (
     <div
-      className="absolute inset-0 z-[1] cursor-grab active:cursor-grabbing"
-      style={{ pointerEvents: 'auto' }}
+      className={`absolute inset-0 z-[1] ${editMode ? 'cursor-grab active:cursor-grabbing pointer-events-auto' : 'pointer-events-none md:pointer-events-auto'}`}
       onPointerMove={editMode ? (e) => e.stopPropagation() : undefined}
       onMouseMove={editMode ? (e) => e.stopPropagation() : undefined}
     >
@@ -566,7 +565,6 @@ export function ArchitectureScene() {
         camera={{ position: [3.5, 2, 4], fov: 40 }}
         dpr={[1, 1.5]}
         gl={{ antialias: true, alpha: true }}
-        style={{ pointerEvents: 'auto' }}
       >
         <SceneContent
           editMode={editMode}

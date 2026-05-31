@@ -16,7 +16,7 @@ const works = [
       "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1200&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1541888045656-d70399478f7e?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1522517779552-6cf4c1f31ee3?q=80&w=2070&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1518005020951-eccb494ad742?q=80&w=1200&auto=format&fit=crop"
     ]
   },
@@ -27,7 +27,7 @@ const works = [
     image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop",
     description: "A sleek, double-curved concrete shell inspired by biological waveforms. Floating gracefully on a calm marine preserve, this installation challenges the heavy nature of concrete by manipulating it into fluid, continuous surfaces.",
     gallery: [
-      "https://images.unsplash.com/photo-1541888045656-d70399478f7e?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1611816055460-618287c870bd?q=80&w=1036&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1518005020951-eccb494ad742?q=80&w=1200&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1481026469463-66327c86e544?q=80&w=1200&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1448630360428-65456885c650?q=80&w=1200&auto=format&fit=crop",
@@ -61,7 +61,7 @@ const works = [
       "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1448630360428-65456885c650?q=80&w=1200&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1541888045656-d70399478f7e?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1649688066830-a0cf04d1bc41?q=80&w=987&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1518005020951-eccb494ad742?q=80&w=1200&auto=format&fit=crop"
     ]
   },
@@ -74,7 +74,7 @@ const works = [
     gallery: [
       "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1200&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1541888045656-d70399478f7e?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1554469384-e58fac16e23a?q=80&w=987&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1200&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=1200&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1448630360428-65456885c650?q=80&w=1200&auto=format&fit=crop"
